@@ -5,7 +5,7 @@ class MotorControl {
 public:
     MotorControl(uint8_t in1, uint8_t in2, uint8_t in3, uint8_t in4, uint8_t enA, uint8_t enB);
 
-    void begin();
+    void setup();
     void stop();
     void brake();
 
