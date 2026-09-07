@@ -6,6 +6,7 @@ public:
     DistanceSensor(uint8_t trigPin, uint8_t echoPin);
 
     void setup();
+    void trigger();
     double readDistance();
 
 private:
