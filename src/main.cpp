@@ -1,5 +1,8 @@
 #include <Arduino.h>
 #include "Button.h"
+#include "DisplayManager.h"
+#include "DistanceSensor.h"
+#include "EnvironmentSensor.h"
 
 enum RoverState {
   STATE_IDLE,
@@ -8,11 +11,19 @@ enum RoverState {
 };
 
 RoverState currentState = STATE_IDLE;
+
 Button modeButton(19);
+DistanceSensor distance(5, 18);
+EnvironmentSensor env(4);
+DisplayManager display(21, 22);
 
 void setup() {
   Serial.begin(115200);
+
   modeButton.setup();
+  distance.setup();
+  env.setup();
+  display.setup();
 }
 
 void loop() {
