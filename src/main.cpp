@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "PinConfig.h"
 #include "Button.h"
 #include "DisplayManager.h"
 #include "DistanceSensor.h"
@@ -12,16 +13,19 @@ enum RoverState {
 
 RoverState currentState = STATE_IDLE;
 
-Button modeButton(19);
-DistanceSensor distance(5, 18);
-EnvironmentSensor env(4);
-DisplayManager display(21, 22);
+Button modeButton(btn_mode);
+DisplayManager display(i2c_sda, i2c_scl);
+
+DistanceSensor dist_front(front_trig, front_echo);
+DistanceSensor dist_back(back_trig, back_echo);
+EnvironmentSensor env(dht_data);
 
 void setup() {
   Serial.begin(115200);
 
   modeButton.setup();
-  distance.setup();
+  dist_front.setup();
+  dist_back.setup();
   env.setup();
   display.setup();
 }
