@@ -11,4 +11,11 @@ public:
     float readHumidity();
 private:
     DHT m_dht;
+
+    float m_lastTemp;
+    float m_lastHumid;
+
+    unsigned long m_lastReadTime;
+
+    void update();
 };
