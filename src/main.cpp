@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "Button.h"
 
 enum RoverState {
   STATE_IDLE,
@@ -7,24 +8,16 @@ enum RoverState {
 };
 
 RoverState currentState = STATE_IDLE;
-const int button_pin = 4;
-bool lastButtonState = HIGH;
-long lastDebounceTime = 0;
+Button modeButton(19);
 
 void setup() {
   Serial.begin(115200);
-  pinMode(button_pin, INPUT_PULLUP);
+  modeButton.setup();
 }
 
 void loop() {
-  bool reading = digitalRead(button_pin);
-  if (reading != lastButtonState && millis() - lastDebounceTime > 200) {
-    if (reading == LOW)
-      currentState = static_cast<RoverState>((currentState + 1) % 3);
-
-    lastDebounceTime = millis();
-  }
-  lastButtonState = reading;
+  if (modeButton.isPressed())
+    currentState = static_cast<RoverState>((currentState + 1) % 3);
 
   switch (currentState) {
     case STATE_IDLE:
