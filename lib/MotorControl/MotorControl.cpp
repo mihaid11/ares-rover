@@ -1,7 +1,11 @@
 #include <MotorControl.h>
 
+constexpr float wheel_diameter = 0.065f;
+constexpr float max_rpm = 150.f;
+constexpr float max_speed = max_rpm * (3.1415f * wheel_diameter) / 60.f;
+
 MotorControl::MotorControl(uint8_t in1, uint8_t in2, uint8_t in3, uint8_t in4, uint8_t enA, uint8_t enB)
-    : m_in1(in1), m_in2(in2), m_in3(in3), m_in4(in4), m_enA(enA), m_enB(enB) {}
+    : m_in1(in1), m_in2(in2), m_in3(in3), m_in4(in4), m_enA(enA), m_enB(enB), m_currentPWM(0) {}
 
 void MotorControl::setup() {
     pinMode(m_in1, OUTPUT);
@@ -16,6 +20,8 @@ void MotorControl::setup() {
 }
 
 void MotorControl::stop() {
+    m_currentPWM = 0;
+
     digitalWrite(m_in1, LOW);
     digitalWrite(m_in2, LOW);
     digitalWrite(m_in3, LOW);
@@ -26,6 +32,8 @@ void MotorControl::stop() {
 }
 
 void MotorControl::brake() {
+    m_currentPWM = 0;
+
     digitalWrite(m_in1, HIGH);
     digitalWrite(m_in2, HIGH);
     digitalWrite(m_in3, HIGH);
@@ -36,6 +44,8 @@ void MotorControl::brake() {
 }
 
 void MotorControl::moveForward(uint8_t speed) {
+    m_currentPWM = speed;
+
     digitalWrite(m_in1, HIGH);
     digitalWrite(m_in2, LOW);
     digitalWrite(m_in3, HIGH);
@@ -46,6 +56,8 @@ void MotorControl::moveForward(uint8_t speed) {
 }
 
 void MotorControl::moveBackward(uint8_t speed) {
+    m_currentPWM = speed;
+
     digitalWrite(m_in1, LOW);
     digitalWrite(m_in2, HIGH);
     digitalWrite(m_in3, LOW);
@@ -56,6 +68,8 @@ void MotorControl::moveBackward(uint8_t speed) {
 }
 
 void MotorControl::turnLeft(uint8_t speed) {
+    m_currentPWM = speed;
+
     digitalWrite(m_in1, LOW);
     digitalWrite(m_in2, HIGH);
     digitalWrite(m_in3, HIGH);
@@ -66,6 +80,8 @@ void MotorControl::turnLeft(uint8_t speed) {
 }
 
 void MotorControl::turnRight(uint8_t speed) {
+    m_currentPWM = speed;
+
     digitalWrite(m_in1, HIGH);
     digitalWrite(m_in2, LOW);
     digitalWrite(m_in3, LOW);
@@ -73,4 +89,8 @@ void MotorControl::turnRight(uint8_t speed) {
 
     analogWrite(m_enA, speed);
     analogWrite(m_enB, speed);
+}
+
+float MotorControl::getCurrentSpeed() {
+    return max_speed * (m_currentPWM / 255.f);
 }

@@ -14,6 +14,9 @@ public:
     void turnLeft(uint8_t speed);
     void turnRight(uint8_t speed);
 
+    float getCurrentSpeed();
+
 private:
     uint8_t m_in1, m_in2, m_in3, m_in4, m_enA, m_enB;
+    uint8_t m_currentPWM;
 };
