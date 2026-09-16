@@ -18,3 +18,7 @@ An open-source, autonomous 2WD rover built on the ESP32 platform, featuring envi
 - [Software arhitecture](./docs/software_design.md)
 - [Power management](./docs/power_management.md)
 - [Telemetry and metrics](./docs/telemetry_metrics.md)
+
+## License
+
+Ares Rover is open source and distributed under the [MIT LICENSE](LICENSE).
