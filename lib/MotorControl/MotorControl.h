@@ -15,8 +15,11 @@ public:
     void turnRight(uint8_t speed);
 
     float getCurrentSpeed();
+    void setCalibration(float leftOffset, float rightOffset);
 
 private:
     uint8_t m_in1, m_in2, m_in3, m_in4, m_enA, m_enB;
     uint8_t m_currentPWM;
+
+    float m_leftOffset, m_rightOffset;
 };
