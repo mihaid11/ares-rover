@@ -1,4 +1,8 @@
 #include <Arduino.h>
+#include <WiFi.h>
+#include <WebServer.h>
+#include "UI.h"
+
 #include "PinConfig.h"
 #include "Button.h"
 #include "DisplayManager.h"
@@ -26,12 +30,14 @@ DisplayManager display;
 Button nav_button(btn_nav);
 Button action_button(btn_action);
 
+WebServer server(80);
+
 void setup() {
   Serial.begin(115200);
   Wire.begin(i2c_sda, i2c_scl);
 
   motor.setup();
-  motor.setCalibration(1.f, 0.97f);
+  motor.setCalibration(1.f, 0.98f);
   motor.stop();
 
   front_dist.setup();
@@ -43,11 +49,20 @@ void setup() {
 
   nav_button.setup();
   action_button.setup();
+
+  server.on("/", handleRoot);
+  server.on("/action", handleAction);
+  server.on("/distance", handleDistance);
+  server.on("/power", handlePower);
+  server.on("/env", handleEnvironment);
+  server.on("/inertial", handleInertial);
+
+  server.begin();
 }
 
 void loop() {
-  front_dist.update(500);
-  back_dist.update(500);
+  front_dist.update(100);
+  back_dist.update(100);
   dht.update(2000);
   mpu.update(50);
   ina.update(700);
