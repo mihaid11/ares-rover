@@ -7,8 +7,10 @@ public:
     EnvironmentSensor(uint8_t datPin);
 
     void setup();
-    float readTemperature();
-    float readHumidity();
+    void update(unsigned long interval = 2000);
+
+    float getTemperature();
+    float getHumidity();
 private:
     DHT m_dht;
 
@@ -16,6 +18,4 @@ private:
     float m_lastHumid;
 
     unsigned long m_lastReadTime;
-
-    void update();
 };

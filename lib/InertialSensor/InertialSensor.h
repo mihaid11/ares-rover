@@ -7,7 +7,7 @@ public:
     InertialSensor();
 
     void setup();
-    void update(unsigned long interval);
+    void update(unsigned long interval = 50);
 
     float getAccelerationX() const;
     float getAccelerationY() const;

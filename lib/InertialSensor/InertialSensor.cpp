@@ -16,7 +16,7 @@ void InertialSensor::setup() {
 
 void InertialSensor::update(unsigned long interval) {
     unsigned long current_time = millis();
-    if (current_time - m_lastReadTime >- max(min_interval, interval)) {
+    if (current_time - m_lastReadTime >= max(min_interval, interval)) {
         sensors_event_t acc, gyr, temp;
         m_mpu.getEvent(&acc, &gyr, &temp);
 
