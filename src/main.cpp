@@ -4,46 +4,58 @@
 #include "DisplayManager.h"
 #include "DistanceSensor.h"
 #include "EnvironmentSensor.h"
+#include "InertialSensor.h"
+#include "MotorControl.h"
+#include "PowerManager.h"
 
 enum RoverState {
   STATE_IDLE,
-  STATE_RC_MODE,
-  STATE_LINE_FOLLOW
+  STATE_RC_MODE
 };
 
-RoverState currentState = STATE_IDLE;
+RoverState current_mode = STATE_IDLE;
 
-Button modeButton(btn_mode);
-DisplayManager display(i2c_sda, i2c_scl);
+MotorControl motor(in1, in2, in3, in4, enA, enB);
+DistanceSensor front_dist(front_trig, front_echo);
+DistanceSensor back_dist(back_trig, back_echo);
+EnvironmentSensor dht(dht_data);
+InertialSensor mpu;
+PowerManager ina;
+DisplayManager display;
 
-DistanceSensor dist_front(front_trig, front_echo);
-DistanceSensor dist_back(back_trig, back_echo);
-EnvironmentSensor env(dht_data);
+Button nav_button(btn_nav);
+Button action_button(btn_action);
 
 void setup() {
   Serial.begin(115200);
+  Wire.begin(i2c_sda, i2c_scl);
 
-  modeButton.setup();
-  dist_front.setup();
-  dist_back.setup();
-  env.setup();
+  motor.setup();
+  motor.setCalibration(1.f, 0.97f);
+  motor.stop();
+
+  front_dist.setup();
+  back_dist.setup();
+  dht.setup();
+  ina.setup();
+  mpu.setup();
   display.setup();
+
+  nav_button.setup();
+  action_button.setup();
 }
 
 void loop() {
-  if (modeButton.isPressed())
-    currentState = static_cast<RoverState>((currentState + 1) % 3);
+  front_dist.update(500);
+  back_dist.update(500);
+  dht.update(2000);
+  mpu.update(50);
+  ina.update(700);
+  display.update(0, dht.getTemperature(), dht.getHumidity(), front_dist.getDistance(), back_dist.getDistance(),
+    motor.getCurrentSpeed(), ina.getVoltage(), ina.getBatteryPercentage(), ina.getCurrent(), ina.getPower());
 
-  switch (currentState) {
-    case STATE_IDLE:
-      break;
-
-    case STATE_RC_MODE:
-      // TODO: Implement RC Mode
-      break;
-
-    case STATE_LINE_FOLLOW:
-      // TODO: Implement Line Follow Mode
-      break;
+  if (action_button.isPressed()) {
+    current_mode = static_cast<RoverState>((current_mode + 1) % 2);
+    motor.brake();
   }
 }
