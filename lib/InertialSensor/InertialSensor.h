@@ -17,10 +17,13 @@ public:
     float getGyroY() const;
     float getGyroZ() const;
 
+    float getYaw() const;
+
 private:
     Adafruit_MPU6050 m_mpu;
     unsigned long m_lastReadTime;
 
     float m_accelerationX, m_accelerationY, m_accelerationZ;
-    float m_gyroX, m_gyroY, m_gyroZ;
+    float m_gyroX, m_gyroY, m_gyroZ, m_gyroZ_error;
+    float m_yaw;
 };
