@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
+#include "WebPage.h"
 #include "UI.h"
 
 #include "PinConfig.h"
@@ -32,6 +33,18 @@ Button action_button(btn_action);
 
 WebServer server(80);
 
+void startWiFi() {
+  WiFi.mode(WIFI_AP);
+  WiFi.softAP("AresRover", "12345678");
+  server.begin();
+}
+
+void stopWiFi() {
+  server.stop();
+  WiFi.softAPdisconnect();
+  WiFi.mode(WIFI_OFF);
+}
+
 void setup() {
   Serial.begin(115200);
   Wire.begin(i2c_sda, i2c_scl);
@@ -56,8 +69,6 @@ void setup() {
   server.on("/power", handlePower);
   server.on("/env", handleEnvironment);
   server.on("/inertial", handleInertial);
-
-  server.begin();
 }
 
 void loop() {
@@ -72,5 +83,18 @@ void loop() {
   if (action_button.isPressed()) {
     current_mode = static_cast<RoverState>((current_mode + 1) % 2);
     motor.brake();
+
+    if (current_mode == STATE_IDLE) {
+      stopWiFi();
+      display.showMessage("Idle Mode");
+    } else if (current_mode == STATE_RC_MODE) {
+      startWiFi();
+      display.showMessage("RC Mode");
+    }
+  }
+
+  if (current_mode == STATE_RC_MODE) {
+    motor.update(mpu.getGyroZ());
+    server.handleClient();
   }
 }
