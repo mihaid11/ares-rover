@@ -22,6 +22,11 @@ void DistanceSensor::update(unsigned long interval) {
         double dist = (m_echoDuration * speed_of_sound) / 2.;
         dist = constrain(dist, 2., 300.);
 
+        float dt = (current_time - m_lastDistanceTime) / 1000.f;
+
+        if (dt > 0.f)
+            m_velocity = (m_lastDistance - dist) / dt;
+
         m_lastDistance = dist;
         m_lastDistanceTime = current_time;
         m_dataReady = false;
@@ -58,4 +63,8 @@ void IRAM_ATTR DistanceSensor::handleEcho() {
 
 double DistanceSensor::getDistance() const {
     return m_lastDistance;
+}
+
+double DistanceSensor::getVelocity() const {
+    return m_velocity;
 }

@@ -9,11 +9,13 @@ public:
     void update(unsigned long interval = 100);
 
     double getDistance() const;
+    double getVelocity() const;
 
 private:
     uint8_t m_trigPin, m_echoPin;
     unsigned long m_lastReadTime, m_lastDistanceTime;
     double m_lastDistance;
+    double m_velocity;
 
     void trigger();
 
