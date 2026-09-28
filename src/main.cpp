@@ -50,7 +50,7 @@ void setup() {
   Wire.begin(i2c_sda, i2c_scl);
 
   motor.setup();
-  motor.setCalibration(1.f, 0.98f);
+  motor.setCalibration(1.f, 0.97f);
   motor.stop();
 
   front_dist.setup();
@@ -94,7 +94,7 @@ void loop() {
   }
 
   if (current_mode == STATE_RC_MODE) {
-    motor.update(mpu.getGyroZ());
+    motor.update(mpu.getGyroZ(), front_dist.getDistance(), front_dist.getVelocity(), back_dist.getDistance(), back_dist.getVelocity());
     server.handleClient();
   }
 }

@@ -52,45 +52,63 @@ void MotorControl::setCommand(char command, uint8_t speed) {
         brake();
 }
 
-void MotorControl::update(float yaw, float front_dist, float back_dist) {
-    float min_dist = 5.f + ((float)m_targetSpeed / 255.f) * 10.f;
+void MotorControl::update(float yaw, float front_dist, float front_vel, float back_dist, float back_vel) {
+    int speed = m_targetSpeed;
 
-    if (m_currentCommand == 'F' && front_dist > 2.f) {
-        if (front_dist <= min_dist) {
+    if (m_currentCommand == 'F') {
+        if (front_dist <= 7.f) {
             brake();
-            m_currentCommand = 'S';
-            return;
-        } else if (front_dist <= min_dist + 5.f) {
-            stop();
             m_currentCommand = 'S';
             return;
         }
+
+        if (front_dist < 50.f && front_vel > 2.f && millis() > 5000) {
+            float time = front_dist / front_vel;
+
+            if (time <= 0.4f) {
+                brake();
+                m_currentCommand = 'S';
+                return;
+            } else if (time <= 1.2f) {
+                int max_speed = 130 + (255 - 130) * (time - 0.4f) / 0.8f;
+                speed = min((int)m_targetSpeed, max_speed);
+            }
+        }
     }
 
-    if (m_currentCommand == 'B' && back_dist > 2.f) {
-        if (back_dist <= min_dist) {
+    if (m_currentCommand == 'B') {
+        if (back_dist <= 7.f) {
             brake();
             m_currentCommand = 'S';
             return;
-        } else if (front_dist <= min_dist + 5.f) {
-            stop();
-            m_currentCommand = 'S';
-            return;
+        }
+
+        if (back_dist < 50.f && back_vel > 2.f && millis() > 5000) {
+            float time = back_dist / back_vel;
+
+            if (time <= 0.4f) {
+                brake();
+                m_currentCommand = 'S';
+                return;
+            } else if (time <= 1.2f) {
+                int max_speed = 130 + (255 - 130) * (time - 0.4f) / 0.8f;
+                speed = min((int)m_targetSpeed, max_speed);
+            }
         }
     }
 
     if (m_currentCommand == 'F') {
         if (m_lastCommand != 'F')
             m_targetYaw = yaw;
-        moveForward(m_targetSpeed, yaw);
+        moveForward(speed, yaw);
     } else if (m_currentCommand == 'L') {
-        turnLeft(m_targetSpeed);
+        turnLeft(speed);
     } else if (m_currentCommand == 'R') {
-        turnRight(m_targetSpeed);
+        turnRight(speed);
     } else if (m_currentCommand == 'B') {
         if (m_lastCommand != 'B')
             m_targetYaw = yaw;
-        moveBackward(m_targetSpeed, yaw);
+        moveBackward(speed, yaw);
     }
 
     m_lastCommand = m_currentCommand;

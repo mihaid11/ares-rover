@@ -20,14 +20,30 @@ void DistanceSensor::update(unsigned long interval) {
 
     if (m_dataReady) {
         double dist = (m_echoDuration * speed_of_sound) / 2.;
+
+        if (dist == 0 || dist > 300.) {
+            if (m_lastDistance > 0. && m_lastDistance < 15.)
+                dist = 2.;
+            else
+                dist = 300.;
+        }
+
         dist = constrain(dist, 2., 300.);
 
+        if (m_lastDistance > 0.) {
+            if (dist > m_lastDistance + 15.)
+                dist = m_lastDistance + 15.;
+            if (dist < m_lastDistance - 15.)
+                dist = m_lastDistance - 15.;
+        }
+
+        double filtered_dist = (dist * 0.6) + (m_lastDistance * 0.4);
         float dt = (current_time - m_lastDistanceTime) / 1000.f;
 
         if (dt > 0.f)
-            m_velocity = (m_lastDistance - dist) / dt;
+            m_velocity = (m_velocity * 0.5) + ((m_lastDistance - filtered_dist) / dt * 0.5);
 
-        m_lastDistance = dist;
+        m_lastDistance = filtered_dist;
         m_lastDistanceTime = current_time;
         m_dataReady = false;
     }

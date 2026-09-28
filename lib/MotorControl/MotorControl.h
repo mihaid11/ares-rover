@@ -9,7 +9,7 @@ public:
     void stop();
     void brake();
 
-    void update(float yaw, float front_dist, float back_dist);
+    void update(float yaw, float front_dist, float front_vel, float back_dist, float back_vel);
     void setCommand(char command, uint8_t speed);
 
     void moveForward(uint8_t speed, float yaw);
