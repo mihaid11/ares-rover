@@ -52,7 +52,33 @@ void MotorControl::setCommand(char command, uint8_t speed) {
         brake();
 }
 
-void MotorControl::update(float yaw) {
+void MotorControl::update(float yaw, float front_dist, float back_dist) {
+    float min_dist = 5.f + ((float)m_targetSpeed / 255.f) * 10.f;
+
+    if (m_currentCommand == 'F' && front_dist > 2.f) {
+        if (front_dist <= min_dist) {
+            brake();
+            m_currentCommand = 'S';
+            return;
+        } else if (front_dist <= min_dist + 5.f) {
+            stop();
+            m_currentCommand = 'S';
+            return;
+        }
+    }
+
+    if (m_currentCommand == 'B' && back_dist > 2.f) {
+        if (back_dist <= min_dist) {
+            brake();
+            m_currentCommand = 'S';
+            return;
+        } else if (front_dist <= min_dist + 5.f) {
+            stop();
+            m_currentCommand = 'S';
+            return;
+        }
+    }
+
     if (m_currentCommand == 'F') {
         if (m_lastCommand != 'F')
             m_targetYaw = yaw;
