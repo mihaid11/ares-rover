@@ -17,7 +17,8 @@ public:
     void turnLeft(uint8_t speed);
     void turnRight(uint8_t speed);
 
-    float getCurrentSpeed();
+    float getCurrentSpeed() const;
+    char getCurrentCommand() const;
     void setCalibration(float leftOffset, float rightOffset);
 
 private:

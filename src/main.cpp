@@ -18,7 +18,7 @@ enum RoverState {
   STATE_RC_MODE
 };
 
-RoverState current_mode = STATE_IDLE;
+RoverState current_mode = STATE_RC_MODE;
 int display_mode = 0;
 bool eco_mode = false;
 
@@ -38,6 +38,9 @@ WebServer server(80);
 int dht_interval = 2000;
 int ina_interval = 700;
 int display_interval = 600;
+int front_interval = 100;
+int back_interval = 100;
+int mpu_interval = 50;
 
 void startWiFi() {
   WiFi.mode(WIFI_AP);
@@ -76,13 +79,15 @@ void setup() {
   server.on("/env", handleEnvironment);
   server.on("/inertial", handleInertial);
   server.on("/eco", handleEco);
+
+  startWiFi();
 }
 
 void loop() {
-  front_dist.update(100);
-  back_dist.update(100);
+  front_dist.update(front_interval);
+  back_dist.update(back_interval);
   dht.update(dht_interval);
-  mpu.update(50);
+  mpu.update(mpu_interval);
   ina.update(ina_interval);
   display.update(display_mode, dht.getTemperature(), dht.getHumidity(), front_dist.getDistance(), back_dist.getDistance(),
     motor.getCurrentSpeed(), ina.getVoltage(), ina.getBatteryPercentage(), ina.getCurrent(), ina.getPower(), display_interval);
@@ -94,17 +99,14 @@ void loop() {
     current_mode = static_cast<RoverState>((current_mode + 1) % 2);
     motor.brake();
 
-    if (current_mode == STATE_IDLE) {
-      stopWiFi();
+    if (current_mode == STATE_IDLE)
       display.showMessage("Idle Mode");
-    } else if (current_mode == STATE_RC_MODE) {
-      startWiFi();
+    else if (current_mode == STATE_RC_MODE)
       display.showMessage("RC Mode");
-    }
   }
 
-  if (current_mode == STATE_RC_MODE) {
+  server.handleClient();
+
+  if (current_mode == STATE_RC_MODE)
     motor.update(mpu.getGyroZ(), front_dist.getDistance(), front_dist.getVelocity(), back_dist.getDistance(), back_dist.getVelocity(), eco_mode);
-    server.handleClient();
-  }
 }

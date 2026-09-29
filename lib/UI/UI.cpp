@@ -11,6 +11,7 @@ void handleAction() {
     int spd = server.arg("speed").toInt();
 
     motor.setCommand(dir[0], spd);
+    updateDynamicIntervals();
 
     server.send(200, "text/plain", "OK");
 }
@@ -85,5 +86,41 @@ void handleEco() {
         display.setBacklight(true);
     }
 
+    updateDynamicIntervals();
+
     server.send(200, "text/plain", "OK");
+}
+
+void updateDynamicIntervals() {
+    char c = motor.getCurrentCommand();
+
+    if (eco_mode) {
+        if (c == 'F') {
+            front_interval = 120;
+            back_interval = 1000;
+            mpu_interval = 50;
+        } else if (c == 'B') {
+            front_interval = 1000;
+            back_interval = 120;
+            mpu_interval = 50;
+        } else {
+            front_interval = 1000;
+            back_interval = 1000;
+            mpu_interval = 1000;
+        }
+    } else {
+        if (c == 'F') {
+            front_interval = 80;
+            back_interval = 500;
+            mpu_interval = 25;
+        } else if (c == 'B') {
+            front_interval = 500;
+            back_interval = 80;
+            mpu_interval = 25;
+        } else {
+            front_interval = 500;
+            back_interval = 500;
+            mpu_interval = 100;
+        }
+    }
 }

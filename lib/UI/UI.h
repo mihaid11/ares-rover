@@ -20,6 +20,9 @@ extern bool eco_mode;
 extern int dht_interval;
 extern int ina_interval;
 extern int display_interval;
+extern int front_interval;
+extern int back_interval;
+extern int mpu_interval;
 
 void handleRoot();
 void handleAction();
@@ -28,3 +31,5 @@ void handlePower();
 void handleEnvironment();
 void handleInertial();
 void handleEco();
+
+void updateDynamicIntervals();

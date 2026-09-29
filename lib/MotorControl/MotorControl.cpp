@@ -186,8 +186,12 @@ void MotorControl::turnRight(uint8_t speed) {
     analogWrite(m_enB, speed * m_rightOffset);
 }
 
-float MotorControl::getCurrentSpeed() {
+float MotorControl::getCurrentSpeed() const {
     return max_speed * (m_currentPWM / 255.f);
+}
+
+char MotorControl::getCurrentCommand() const {
+    return m_currentCommand;
 }
 
 void MotorControl::setCalibration(float leftOffset, float rightOffset) {
