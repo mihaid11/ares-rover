@@ -1,5 +1,6 @@
 #include "UI.h"
 #include <Arduino.h>
+#include <esp32-hal-cpu.h>
 
 void handleRoot() {
     server.send(200, "text/html", htmlPage);
@@ -49,15 +50,40 @@ void handleEnvironment() {
 }
 
 void handleInertial() {
-  String json = "{";
+    String json = "{";
 
-  json += "\"ax\":" + String(mpu.getAccelerationX(), 2) + ",";
-  json += "\"ay\":" + String(mpu.getAccelerationY(), 2) + ",";
-  json += "\"az\":" + String(mpu.getAccelerationZ(), 2) + ",";
-  json += "\"gx\":" + String(mpu.getGyroX(), 2) + ",";
-  json += "\"gy\":" + String(mpu.getGyroY(), 2) + ",";
-  json += "\"gz\":" + String(mpu.getGyroZ(), 2);
-  json += "}";
+    json += "\"ax\":" + String(mpu.getAccelerationX(), 2) + ",";
+    json += "\"ay\":" + String(mpu.getAccelerationY(), 2) + ",";
+    json += "\"az\":" + String(mpu.getAccelerationZ(), 2) + ",";
+    json += "\"gx\":" + String(mpu.getGyroX(), 2) + ",";
+    json += "\"gy\":" + String(mpu.getGyroY(), 2) + ",";
+    json += "\"gz\":" + String(mpu.getGyroZ(), 2);
+    json += "}";
 
-  server.send(200, "application/json", json);
+    server.send(200, "application/json", json);
+}
+
+void handleEco() {
+    bool state = server.arg("state") == "1";
+    eco_mode = state;
+
+    if (eco_mode) {
+        WiFi.setTxPower(WIFI_POWER_8_5dBm);
+
+        dht_interval = 60000;
+        ina_interval = 3000;
+        display_interval = 2000;
+
+        display.setBacklight(false);
+    } else {
+        WiFi.setTxPower(WIFI_POWER_19dBm);
+
+        dht_interval = 2000;
+        ina_interval = 700;
+        display_interval = 600;
+
+        display.setBacklight(true);
+    }
+
+    server.send(200, "text/plain", "OK");
 }

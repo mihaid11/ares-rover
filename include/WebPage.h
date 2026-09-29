@@ -15,6 +15,8 @@ const char* htmlPage = R"rawliteral(
     .controls { display: inline-block; margin-top: 20px; }
     .telemetry { background-color: #333; padding: 10px; border-radius: 10px; margin: 15px auto; width: 80%; font-size: 14px;}
     .telemetry p { margin: 5px 0; }
+    .eco { margin: 25px auto 15px; display: flex; align-items: center; gap: 12px; font-size: 16px; }
+    .eco input { width: 45px; height: 24px; }
   </style>
 </head>
 <body>
@@ -46,6 +48,11 @@ const char* htmlPage = R"rawliteral(
     </div>
   </div>
 
+  <div class="eco">
+    <span>Eco Mode</span>
+    <input type="checkbox" id="ecoToggle" onchange="toggleEco()">
+  </div>
+
   <script>
     var speedSlider = document.getElementById("speed");
     var speedVal = document.getElementById("speedVal");
@@ -56,36 +63,52 @@ const char* htmlPage = R"rawliteral(
       fetch("/action?dir=" + dir + "&speed=" + speedSlider.value);
     }
 
-    setInterval(function() {
-      fetch("/distance").then(response => response.json()).then(data => { 
-        document.getElementById("distF").innerHTML = data.f; 
-        document.getElementById("distB").innerHTML = data.b; 
-      });
-    }, 100);
+    var eco = false;
+    var timers = [];
 
-    setInterval(function() {
-      fetch("/power").then(response => response.json()).then(data => {
-        document.getElementById("voltVal").innerHTML = data.v; document.getElementById("currVal").innerHTML = data.c;
-        document.getElementById("powVal").innerHTML = data.p; document.getElementById("batVal").innerHTML = data.b;
-      });
-    }, 700);
+    function toggleEco() {
+      eco = document.getElementById("ecoToggle").checked;
+      fetch("/eco?state=" + (eco ? 1 : 0));
 
-    setInterval(function() {
-      fetch("/env").then(response => response.json()).then(data => {
-        document.getElementById("tempVal").innerHTML = data.t; document.getElementById("humVal").innerHTML = data.h;
-      });
-    }, 2000);
+      timers.forEach(clearInterval);
+      timers = [];
 
-    setInterval(function() {
-      fetch("/inertial").then(response => response.json()).then(data => {
-        document.getElementById("ax").innerHTML = data.ax;
-        document.getElementById("ay").innerHTML = data.ay;
-        document.getElementById("az").innerHTML = data.az;
-        document.getElementById("gx").innerHTML = data.gx;
-        document.getElementById("gy").innerHTML = data.gy;
-        document.getElementById("gz").innerHTML = data.gz;
-      });
-    }, 500);
+      timers.push(setInterval(function() {
+        fetch("/distance").then(r => r.json()).then(data => {
+          document.getElementById("distF").innerHTML = data.f;
+          document.getElementById("distB").innerHTML = data.b;
+        });
+      }, eco ? 300 : 100));
+
+      timers.push(setInterval(function() {
+        fetch("/power").then(r => r.json()).then(data => {
+          document.getElementById("voltVal").innerHTML = data.v;
+          document.getElementById("currVal").innerHTML = data.c;
+          document.getElementById("powVal").innerHTML = data.p;
+          document.getElementById("batVal").innerHTML = data.b;
+        });
+      }, eco ? 3000 : 700));
+
+      timers.push(setInterval(function() {
+        fetch("/env").then(r => r.json()).then(data => {
+          document.getElementById("tempVal").innerHTML = data.t;
+          document.getElementById("humVal").innerHTML = data.h;
+        });
+      }, eco ? 10000 : 2000));
+
+      timers.push(setInterval(function() {
+        fetch("/inertial").then(r => r.json()).then(data => {
+          document.getElementById("ax").innerHTML = data.ax;
+          document.getElementById("ay").innerHTML = data.ay;
+          document.getElementById("az").innerHTML = data.az;
+          document.getElementById("gx").innerHTML = data.gx;
+          document.getElementById("gy").innerHTML = data.gy;
+          document.getElementById("gz").innerHTML = data.gz;
+        });
+      }, eco ? 2000 : 500));
+    }
+
+    toggleEco();
   </script>
 </body>
 </html>

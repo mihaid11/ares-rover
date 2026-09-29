@@ -52,8 +52,10 @@ void MotorControl::setCommand(char command, uint8_t speed) {
         brake();
 }
 
-void MotorControl::update(float yaw, float front_dist, float front_vel, float back_dist, float back_vel) {
+void MotorControl::update(float yaw, float front_dist, float front_vel, float back_dist, float back_vel, bool eco_mode) {
     int speed = m_targetSpeed;
+    if (eco_mode)
+        speed = min(speed, 180);
 
     if (m_currentCommand == 'F') {
         if (front_dist <= 7.f) {

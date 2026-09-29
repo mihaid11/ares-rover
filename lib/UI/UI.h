@@ -4,6 +4,7 @@
 #include "DistanceSensor.h"
 #include "EnvironmentSensor.h"
 #include "InertialSensor.h"
+#include "DisplayManager.h"
 #include "PowerManager.h"
 
 extern WebServer server;
@@ -14,6 +15,11 @@ extern DistanceSensor back_dist;
 extern EnvironmentSensor dht;
 extern InertialSensor mpu;
 extern PowerManager ina;
+extern DisplayManager display;
+extern bool eco_mode;
+extern int dht_interval;
+extern int ina_interval;
+extern int display_interval;
 
 void handleRoot();
 void handleAction();
@@ -21,3 +27,4 @@ void handleDistance();
 void handlePower();
 void handleEnvironment();
 void handleInertial();
+void handleEco();

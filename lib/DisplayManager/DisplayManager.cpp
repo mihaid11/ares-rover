@@ -61,6 +61,13 @@ void DisplayManager::update(int mode, float temp, float humid, float distFront, 
     }
 }
 
+void DisplayManager::setBacklight(bool state) {
+    if (state)
+        m_lcd.backlight();
+    else
+        m_lcd.noBacklight();
+}
+
 void DisplayManager::renderEnvironment(float temp, float humid) {
     char buffer[17];
 

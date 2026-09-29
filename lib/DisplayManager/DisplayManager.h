@@ -11,6 +11,8 @@ public:
         float voltage, int batteryP, float current, float power, unsigned long interval = 600);
     void showMessage(const char* text, unsigned long duration = 3000);
 
+    void setBacklight(bool state);
+
 private:
     LiquidCrystal_I2C m_lcd;
 

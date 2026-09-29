@@ -19,6 +19,8 @@ enum RoverState {
 };
 
 RoverState current_mode = STATE_IDLE;
+int display_mode = 0;
+bool eco_mode = false;
 
 MotorControl motor(in1, in2, in3, in4, enA, enB);
 DistanceSensor front_dist(front_trig, front_echo);
@@ -32,6 +34,10 @@ Button nav_button(btn_nav);
 Button action_button(btn_action);
 
 WebServer server(80);
+
+int dht_interval = 2000;
+int ina_interval = 700;
+int display_interval = 600;
 
 void startWiFi() {
   WiFi.mode(WIFI_AP);
@@ -69,16 +75,20 @@ void setup() {
   server.on("/power", handlePower);
   server.on("/env", handleEnvironment);
   server.on("/inertial", handleInertial);
+  server.on("/eco", handleEco);
 }
 
 void loop() {
   front_dist.update(100);
   back_dist.update(100);
-  dht.update(2000);
+  dht.update(dht_interval);
   mpu.update(50);
-  ina.update(700);
-  display.update(0, dht.getTemperature(), dht.getHumidity(), front_dist.getDistance(), back_dist.getDistance(),
-    motor.getCurrentSpeed(), ina.getVoltage(), ina.getBatteryPercentage(), ina.getCurrent(), ina.getPower());
+  ina.update(ina_interval);
+  display.update(display_mode, dht.getTemperature(), dht.getHumidity(), front_dist.getDistance(), back_dist.getDistance(),
+    motor.getCurrentSpeed(), ina.getVoltage(), ina.getBatteryPercentage(), ina.getCurrent(), ina.getPower(), display_interval);
+
+  if (nav_button.isPressed())
+    display_mode = (display_mode + 1) % 5;
 
   if (action_button.isPressed()) {
     current_mode = static_cast<RoverState>((current_mode + 1) % 2);
@@ -94,7 +104,7 @@ void loop() {
   }
 
   if (current_mode == STATE_RC_MODE) {
-    motor.update(mpu.getGyroZ(), front_dist.getDistance(), front_dist.getVelocity(), back_dist.getDistance(), back_dist.getVelocity());
+    motor.update(mpu.getGyroZ(), front_dist.getDistance(), front_dist.getVelocity(), back_dist.getDistance(), back_dist.getVelocity(), eco_mode);
     server.handleClient();
   }
 }
