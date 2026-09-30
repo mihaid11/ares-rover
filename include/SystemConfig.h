@@ -32,6 +32,6 @@ namespace web_normal {
 namespace web_eco {
     constexpr int dist = 500;
     constexpr int power = 3000;
-    constexpr int env = 10000;
+    constexpr int env = 60000;
     constexpr int imu = 2000;
 }

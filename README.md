@@ -9,8 +9,7 @@ An open-source, autonomous 2WD rover built on the ESP32 platform, featuring envi
 | Environmental telemetry | Real-time temperature and humidity monitoring via AM2302 |
 | Dynamic power management | Hardware sleep and sensor throttling based on active load |
 | Spatial awareness | Front and rear ultrasonic distance measurement |
-| Remote control | Manual override via wireless communication **(In progress)** |
-| Autonomous maze solving | MPU6050-assisted 90-degree turning and wall following **(In progress)** |
+| Remote control | Manual override via wireless communication |
 
 ## Documentation
 - [Hardware specifications](./docs/hardware_specs.md)
