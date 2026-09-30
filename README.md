@@ -1,6 +1,6 @@
 # Ares Rover
 
-An open-source, autonomous 2WD rover built on the ESP32 platform, featuring environmental telemetry, obstacle avoidance, and dynamic power management.
+An open-source 2WD rover built on the ESP32 platform, combining remote web control with active stability and safety systems. It features closed-loop yaw correction, ultrasonic emergency braking, real-time INA219 power monitoring, and an adaptive Eco mode.
 
 ## Features
 

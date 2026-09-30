@@ -40,7 +40,8 @@ void InertialSensor::update(unsigned long interval) {
         m_gyroY = gyr.gyro.y;
         m_gyroZ = gyr.gyro.z;
         
-        m_yaw += (gyr.gyro.z - m_gyroZ_error) * dt * (180.f / PI);
+        if (abs(gyr.gyro.z - m_gyroZ_error) > 0.015f)
+            m_yaw += (gyr.gyro.z - m_gyroZ_error) * dt * (180.f / PI);
 
         m_lastReadTime = current_time;
     }

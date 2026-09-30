@@ -14,6 +14,16 @@ The system aggregates data from multiple subsystems to provide a complete view o
 - **Proximity data (HC-SR04)**: Front and rear distance metrics.
 - **Power data (INA219)**: Real-time voltage, current, power and a calculated battery percentage based on the Li-Ion discharge curve.
 
+### Straight-line assist bechmark
+To evaluate the effectiveness of the MPU6050 yaw-lock algorithm, the rover was tested on a smooth surface over a fixed distance of **250cm** at a target speed of **180 PWM**.
+
+| Configuration | Mean lateral drift | Drift percentage | Drift angle |
+| --- | --- | --- | --- |
+| Uncalibrated | 56.3cm | 22.52% | 12.69° |
+| Static calibration (0.97 offset) | 27.6cm | 11.04% | 6.30° |
+| P-Controller (Kp = 3.0) | 17.7cm | 7.08% | 4.05° |
+| PID Controller | **In progress** | **In progress** | **In progress** |
+
 ## Dynamic data polling
 To prevent network congestion, the telemetry system decouples the hardware tick rate from the network tick rate.
 - **Hardware layer**: Sensors are read at high speeds to ensure the autonomous braking and steering systems have real-time data.
