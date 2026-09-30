@@ -3,6 +3,7 @@
 #include <WebServer.h>
 #include "WebPage.h"
 #include "UI.h"
+#include "SystemConfig.h"
 
 #include "PinConfig.h"
 #include "Button.h"
@@ -35,12 +36,12 @@ Button action_button(btn_action);
 
 WebServer server(80);
 
-int dht_interval = 2000;
-int ina_interval = 700;
-int display_interval = 600;
-int front_interval = 100;
-int back_interval = 100;
-int mpu_interval = 50;
+int dht_interval = hw_normal::dht;
+int ina_interval = hw_normal::ina;;
+int display_interval = hw_normal::display;
+int front_interval = hw_normal::dist_active;
+int back_interval = hw_normal::dist_active;
+int mpu_interval = hw_normal::mpu_active;
 
 void startWiFi() {
   WiFi.mode(WIFI_AP);
@@ -73,6 +74,7 @@ void setup() {
   action_button.setup();
 
   server.on("/", handleRoot);
+  server.on("/config", handleConfig);
   server.on("/action", handleAction);
   server.on("/distance", handleDistance);
   server.on("/power", handlePower);

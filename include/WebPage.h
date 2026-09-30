@@ -65,20 +65,20 @@ const char* htmlPage = R"rawliteral(
 
     var eco = false;
     var timers = [];
+    var config;
 
-    function toggleEco() {
-      eco = document.getElementById("ecoToggle").checked;
-      fetch("/eco?state=" + (eco ? 1 : 0));
-
+    function startTelemetry() {
       timers.forEach(clearInterval);
       timers = [];
+
+      var mode = eco ? config.eco : config.normal;
 
       timers.push(setInterval(function() {
         fetch("/distance").then(r => r.json()).then(data => {
           document.getElementById("distF").innerHTML = data.f;
           document.getElementById("distB").innerHTML = data.b;
         });
-      }, eco ? 300 : 100));
+      }, mode.dist));
 
       timers.push(setInterval(function() {
         fetch("/power").then(r => r.json()).then(data => {
@@ -87,14 +87,14 @@ const char* htmlPage = R"rawliteral(
           document.getElementById("powVal").innerHTML = data.p;
           document.getElementById("batVal").innerHTML = data.b;
         });
-      }, eco ? 3000 : 700));
+      }, mode.pow));
 
       timers.push(setInterval(function() {
         fetch("/env").then(r => r.json()).then(data => {
           document.getElementById("tempVal").innerHTML = data.t;
           document.getElementById("humVal").innerHTML = data.h;
         });
-      }, eco ? 10000 : 2000));
+      }, mode.env));
 
       timers.push(setInterval(function() {
         fetch("/inertial").then(r => r.json()).then(data => {
@@ -105,10 +105,22 @@ const char* htmlPage = R"rawliteral(
           document.getElementById("gy").innerHTML = data.gy;
           document.getElementById("gz").innerHTML = data.gz;
         });
-      }, eco ? 2000 : 500));
+      }, mode.imu));
     }
 
-    toggleEco();
+    function toggleEco() {
+      eco = document.getElementById("ecoToggle").checked;
+
+      fetch("/eco?state=" + (eco ? 1 : 0))
+        .then(() => startTelemetry());
+    }
+
+    fetch("/config")
+      .then(r => r.json())
+      .then(data => {
+        config = data;
+        toggleEco();
+      });
   </script>
 </body>
 </html>

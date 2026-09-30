@@ -1,5 +1,6 @@
 #pragma once
 #include <WebServer.h>
+#include "../../include/SystemConfig.h"
 #include "MotorControl.h"
 #include "DistanceSensor.h"
 #include "EnvironmentSensor.h"
@@ -25,6 +26,7 @@ extern int back_interval;
 extern int mpu_interval;
 
 void handleRoot();
+void handleConfig();
 void handleAction();
 void handleDistance();
 void handlePower();

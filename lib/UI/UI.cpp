@@ -1,9 +1,19 @@
 #include "UI.h"
 #include <Arduino.h>
-#include <esp32-hal-cpu.h>
 
 void handleRoot() {
     server.send(200, "text/html", htmlPage);
+}
+
+void handleConfig() {
+    char json[256];
+    snprintf(json, sizeof(json),
+        "{\"normal\":{\"dist\":%d,\"pow\":%d,\"env\":%d,\"imu\":%d},"
+        "\"eco\":{\"dist\":%d,\"pow\":%d,\"env\":%d,\"imu\":%d}}",
+        web_normal::dist, web_normal::power, web_normal::env, web_normal::imu,
+        web_eco::dist, web_eco::power, web_eco::env, web_eco::imu
+    );
+    server.send(200, "application/json", json);
 }
 
 void handleAction() {
@@ -71,17 +81,17 @@ void handleEco() {
     if (eco_mode) {
         WiFi.setTxPower(WIFI_POWER_8_5dBm);
 
-        dht_interval = 60000;
-        ina_interval = 3000;
-        display_interval = 2000;
+        dht_interval = hw_eco::dht;
+        ina_interval = hw_eco::ina;
+        display_interval = hw_eco::display;
 
         display.setBacklight(false);
     } else {
         WiFi.setTxPower(WIFI_POWER_19dBm);
 
-        dht_interval = 2000;
-        ina_interval = 700;
-        display_interval = 600;
+        dht_interval = hw_normal::dht;
+        ina_interval = hw_normal::ina;
+        display_interval = hw_normal::display;
 
         display.setBacklight(true);
     }
@@ -96,31 +106,31 @@ void updateDynamicIntervals() {
 
     if (eco_mode) {
         if (c == 'F') {
-            front_interval = 120;
-            back_interval = 1000;
-            mpu_interval = 50;
+            front_interval = hw_eco::dist_active;
+            back_interval = hw_eco::dist_passive;
+            mpu_interval = hw_eco::mpu_active;
         } else if (c == 'B') {
-            front_interval = 1000;
-            back_interval = 120;
-            mpu_interval = 50;
+            front_interval = hw_eco::dist_passive;
+            back_interval = hw_eco::dist_active;
+            mpu_interval = hw_eco::mpu_active;
         } else {
-            front_interval = 1000;
-            back_interval = 1000;
-            mpu_interval = 1000;
+            front_interval = hw_eco::dist_passive;
+            back_interval = hw_eco::dist_passive;
+            mpu_interval = hw_eco::mpu_idle;
         }
     } else {
         if (c == 'F') {
-            front_interval = 80;
-            back_interval = 500;
-            mpu_interval = 25;
+            front_interval = hw_normal::dist_active;
+            back_interval = hw_normal::dist_passive;
+            mpu_interval = hw_normal::mpu_active;
         } else if (c == 'B') {
-            front_interval = 500;
-            back_interval = 80;
-            mpu_interval = 25;
+            front_interval = hw_normal::dist_passive;
+            back_interval = hw_normal::dist_active;
+            mpu_interval = hw_normal::mpu_active;
         } else {
-            front_interval = 500;
-            back_interval = 500;
-            mpu_interval = 100;
+            front_interval = hw_normal::dist_passive;
+            back_interval = hw_normal::dist_passive;
+            mpu_interval = hw_normal::mpu_idle;
         }
     }
 }
