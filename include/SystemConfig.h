@@ -7,7 +7,7 @@ namespace hw_normal {
 
     constexpr int dist_active = 80;
     constexpr int dist_passive = 500;
-    constexpr int mpu_active = 25;
+    constexpr int mpu_active = 10;
     constexpr int mpu_idle = 100;
 }
 
@@ -18,7 +18,7 @@ namespace hw_eco {
 
     constexpr int dist_active = 120;
     constexpr int dist_passive = 1000;
-    constexpr int mpu_active = 50;
+    constexpr int mpu_active = 20;
     constexpr int mpu_idle = 1000;
 }
 

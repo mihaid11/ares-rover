@@ -15,8 +15,8 @@ The rover doesn't just look at how far away a wall is, it calculates the time to
 - **Dynamic reaction**:
     - If an obstacle is closer than 50cm and the rover is moving towards it, the system calculates the impact time.
     - If impact is in **1.2 seconds**, it lowers the motor power proportionally.
-    - If impact is in **0.4 seconds**, it triggers an emergency stop and cuts de power.
-- **Boot grace period**: When the ESP32 boots and negociates the WiFi AP connection, the processor experiences heavy load, leading to missed interrupts and false distance spikes. To prevent phantom braking, the AEB system utilizes a 5 second grace period at boot, ignoring speed calculations while the hardware and network stack warm up.
+    - If impact is in **0.4 seconds**, it triggers an emergency stop and cuts the power.
+- **Boot grace period**: When the ESP32 boots and negotiates the WiFi AP connection, the processor experiences heavy load, leading to missed interrupts and false distance spikes. To prevent phantom braking, the AEB system utilizes a 5 second grace period at boot, ignoring speed calculations while the hardware and network stack warm up.
 
 ## Straight line assist
 DC motors rarely spin at the exact same speed, causing the rover to drift left or right instead of driving straight.

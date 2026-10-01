@@ -14,8 +14,8 @@ The system aggregates data from multiple subsystems to provide a complete view o
 - **Proximity data (HC-SR04)**: Front and rear distance metrics.
 - **Power data (INA219)**: Real-time voltage, current, power and a calculated battery percentage based on the Li-Ion discharge curve.
 
-### Straight-line assist bechmark
-To evaluate the effectiveness of the MPU6050 yaw-lock algorithm, the rover was tested on a smooth surface over a fixed distance of **250cm** at a target speed of **180 PWM**.
+### Straight-line assist benchmark
+To evaluate the effectiveness of the MPU6050 yaw-lock algorithm, the rover was tested on a smooth surface over a fixed distance of **250cm** at a target speed of **180 PWM**. Each configuration was tested across 10 runs.
 
 | Configuration | Mean lateral drift | Drift percentage | Drift angle |
 | --- | --- | --- | --- |
@@ -35,6 +35,6 @@ The following table illustrates the dynamic intervals based on the active mode. 
 | Sensor | Hardware interval | Hardware interval Eco | Web UI interval | Web UI interval Eco |
 | --- | --- | --- | --- | --- |
 | Proximity (HC-SR04) | 80ms-500ms | 120ms-1000ms | 200ms | 500ms |
-| Inertial (MPU6050) | 25ms-100ms | 50ms-1000ms | 500ms | 2000ms |
+| Inertial (MPU6050) | 10ms-100ms | 20ms-1000ms | 500ms | 2000ms |
 | Power (INA219) | 700ms | 3000ms | 700ms | 3000ms |
 | Environment (DHT22) | 2000ms | 60000ms | 2000ms  | 60000ms |

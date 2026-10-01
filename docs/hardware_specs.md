@@ -7,13 +7,14 @@
 | **ESP32 DevKit V1** | 1 | 3.3V Logic | Main processing unit and state machine controller |
 | **[L298N](https://www.handsontec.com/dataspecs/L298N%20Motor%20Driver.pdf)** | 1 | 8.4V Power | Dual H-Bridge motor driver for differential steering |
 | **TT DC Motors** | 2 | 6.0V - 8.4V | DC motors for locomotion |
+| **[LM2596](https://www.ti.com/lit/ds/symlink/lm2596.pdf)** | 1 | 8.4V $\rightarrow$ 5.0V | Buck converter supplying the 5V logic domain |
 | **[INA219](https://www.ti.com/lit/ds/symlink/ina219.pdf?ts=1789531969848)** | 1 | 3.3V Logic | Current and power monitor for eco mode triggers |
 | **[MPU6050](https://www.hestore.hu/prod_getfile.php?id=8301)** | 1 | 3.3V Logic | Accelerometer and gyroscope for autonomous turning |
-| **[HC-SR04](https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf)** | 2 | 5.0V Logic | Ultrasonic sensors for front and read obstacle avoidance |
+| **[HC-SR04](https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf)** | 2 | 5.0V Logic | Ultrasonic sensors for front and rear obstacle avoidance |
 | **[AM2303 (DHT22)](https://cdn.sparkfun.com/assets/f/7/d/9/c/DHT22.pdf)** | 1 | 3.3V Logic | Temperature and humidity environmental sensor |
-| **[LM2596](https://www.ti.com/lit/ds/symlink/lm2596.pdf)** | 1 | 8.4V $\rightarrow$ 5.0V | Buck converter supplying the 5V logic domain |
+| **[16x2 I2C LCD](https://www.handsontec.com/dataspecs/module/I2C_1602_LCD.pdf)** | 1 | 5.0V Logic | Onboard screen for live sensor data and status menus |
+| **Tactile button** | 2 | 3.3V Logic | Hardware input for mode selection |
 | **18650 Li-Ion** | 2 | 8.4V Power | 2-cell series battery pack providing system power |
-| **Tactile button** | 1 | 3.3V Logic | Hardware input for mode selection |
 
 ## Pinout and Interfaces
 
@@ -34,3 +35,17 @@
 | `FRONT_ECHO` | `GPIO 18` | Front HC-SR04 ultrasonic echo pulse |
 | `BACK_TRIG` | `GPIO 13` | Rear HC-SR04 ultrasonic trigger pulse |
 | `BACK_ECHO` | `GPIO 17` | Rear HC-SR04 ultrasonic echo pulse |
+
+## Architecture
+
+<p align="center">
+  <img src="images/arhitecture_diagram.png" alt="Ares Rover diagram" width="800" />
+</p>
+
+## Future hardware upgrades
+
+Based on physical testing and power profiling, several component upgrades are planned for the next hardware revision to improve efficiency and sensor precision:
+
+- **Motor driver (`L298N` $\rightarrow$ `TB6612FNG`)**: Wastes less battery as heat, runs cool, and leaves more power for the wheels.
+- **Distance sensors (`HC-SR04` $\rightarrow$ `VL53L1X`)**: Laser sensors are smaller, don't miss angled walls, and connect straight to the I2C bus.
+- **Environment sensor (`DHT22` $\rightarrow$ `BME280`)**: Much faster and more accurate than the slow DHT22, while also using I2C.
